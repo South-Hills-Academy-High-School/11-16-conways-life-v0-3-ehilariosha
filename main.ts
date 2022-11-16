@@ -40,14 +40,14 @@ function drawGrid () {
             if (gridSpace == 1) {
                 gridSprite = sprites.create(img`
                     f f f f f f f f f f 
-                    f 7 7 7 7 7 7 7 7 f 
-                    f 7 7 7 7 7 7 7 7 f 
-                    f 7 7 7 7 7 7 7 7 f 
-                    f 7 7 7 7 7 7 7 7 f 
-                    f 7 7 7 7 7 7 7 7 f 
-                    f 7 7 7 7 7 7 7 7 f 
-                    f 7 7 7 7 7 7 7 7 f 
-                    f 7 7 7 7 7 7 7 7 f 
+                    f a a a c 3 a a a f 
+                    f a b 7 c 7 7 b a f 
+                    f a 7 3 b c 3 7 a f 
+                    f c c b c b c 7 3 f 
+                    f 3 7 c b c b c c f 
+                    f a 7 3 c b 3 7 a f 
+                    f a b 7 7 c 7 b a f 
+                    f a a a 3 c a a a f 
                     f f f f f f f f f f 
                     `, SpriteKind.Player)
                 gridSprite.left = currentX
@@ -86,7 +86,12 @@ function countNeighborsTopLeft () {
     neighborCount = 0
     neighborCount += grid[0 - 0][0 + 1]
     neighborCount += grid[0 + 1][0 + 0]
-    neighborCount += grid[0 + 1][0 + 0]
+    neighborCount += grid[0 + 1][0 + 1]
+    neighborCount += copyRight(1)
+    neighborCount += copyRight(0)
+    neighborCount += copyRight(11)
+    neighborCount += copyBottom()[0]
+    neighborCount += copyBottom()[1]
     return neighborCount
 }
 function countNeighbors (currentRow: number, currentCol: number) {
@@ -94,7 +99,7 @@ function countNeighbors (currentRow: number, currentCol: number) {
     if (currentRow == 0) {
         return countNeighborsWrapTop(currentRow, currentCol)
     } else if (currentRow == 11) {
-        return 0
+        return countNeighborsWrapBottom(currentRow, currentCol)
     } else {
         neighborCount += grid[currentRow - 1][currentCol - 1]
         neighborCount += grid[currentRow - 1][currentCol - 0]
@@ -117,10 +122,33 @@ function countNeighborsTopRight () {
     neighborCount += grid[0 - 0][15 - 1]
     neighborCount += grid[0 + 1][15 - 1]
     neighborCount += grid[0 + 1][15 + 0]
+    neighborCount += copyLeft(1)
+    neighborCount += copyLeft(0)
+    neighborCount += copyLeft(11)
+    neighborCount += copyBottom()[15]
+    neighborCount += copyBottom()[14]
     return neighborCount
 }
 function copyLeft (whichRow: number) {
     return grid[whichRow][0]
+}
+function countNeighborsWrapBottom (currentRow: number, currentCol: number) {
+    neighborCount = 0
+    if (currentCol == 0) {
+        return countNeighborsTopLeft()
+    } else if (currentCol == 15) {
+        return countNeighborsTopRight()
+    } else {
+        neighborCount += copyTop()[currentCol - 1]
+        neighborCount += copyTop()[currentCol - 0]
+        neighborCount += copyTop()[currentCol + 1]
+    }
+    neighborCount += grid[currentRow - 0][currentCol + 1]
+    neighborCount += grid[currentRow - 1][currentCol + 1]
+    neighborCount += grid[currentRow - 1][currentCol + 0]
+    neighborCount += grid[currentRow - 1][currentCol - 1]
+    neighborCount += grid[currentRow - 0][currentCol - 1]
+    return neighborCount
 }
 function copyTop () {
     return grid[0]
